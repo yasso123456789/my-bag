@@ -1,0 +1,568 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حقيبة الباحثين</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans Arabic', sans-serif;
+        }
+        .section-header {
+            @apply text-2xl font-bold mb-4 p-4 rounded-t-lg text-white;
+        }
+        .tool-card {
+            @apply bg-white p-6 rounded-lg shadow-md mb-4;
+        }
+        .tool-title {
+            @apply text-xl font-semibold text-blue-600 mb-2;
+        }
+        .tool-description {
+            @apply text-gray-600 mb-4;
+        }
+        .tool-link {
+            @apply font-bold text-red-600 hover:underline;
+        }
+        .divider {
+            @apply border-t-2 border-blue-300 my-4;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">حقيبة الباحثين</h1>
+            <p class="text-lg text-gray-600 mt-2">إعداد الأستاذ / ياسر مدير مكتبة كلية الخدمة الاجتماعية</p>
+        </header>
+
+        <!-- Section 1: البحث عن الكتب والمراجع -->
+        <section>
+            <h2 class="section-header bg-blue-600">البحث عن الكتب والمراجع</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Google Scholar</h3>
+                <p class="tool-description">محرك بحث متخصص للأوراق العلمية، الكتب، والرسائل الأكاديمية. يتيح الوصول إلى ملايين المصادر الأكاديمية مع إمكانية تصفية النتائج حسب التاريخ أو الاستشهادات.</p>
+                <a href="https://scholar.google.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Zotero</h3>
+                <p class="tool-description">أداة مجانية لتنظيم المراجع وحفظ المقالات. تدعم إنشاء قوائم المراجع بأنماط مختلفة وتتيح البحث عن مصادر أكاديمية مباشرة.</p>
+                <a href="https://www.zotero.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">ResearchGate</h3>
+                <p class="tool-description">منصة للباحثين لمشاركة الأوراق العلمية، طلب النسخ الكاملة، والتواصل مع زملاء في نفس المجال.</p>
+                <a href="https://www.researchgate.net" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Sci-Hub</h3>
+                <p class="tool-description">موقع للوصول إلى الأوراق العلمية مجانًا. ملاحظة: استخدامه قد يكون غير قانوني في بعض الدول، لذا تحقق من القوانين المحلية.</p>
+                <a href="https://sci-hub.se" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">WorldCat</h3>
+                <p class="tool-description">مكتبة عالمية تتيح البحث عن الكتب في المكتبات القريبة أو عبر الإنترنت مع معلومات عن توفرها.</p>
+                <a href="https://www.worldcat.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Open Library</h3>
+                <p class="tool-description">مكتبة رقمية مفتوحة توفر الوصول إلى ملايين الكتب مجانًا، مع خيارات للقراءة أو الاستعارة.</p>
+                <a href="https://openlibrary.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">JSTOR</h3>
+                <p class="tool-description">قاعدة بيانات للمجلات الأكاديمية والكتب، مع إمكانية الوصول المجاني لبعض المحتويات.</p>
+                <a href="https://www.jstor.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">PubMed</h3>
+                <p class="tool-description">قاعدة بيانات متخصصة في العلوم الطبية والحيوية، تحتوي على ملايين المقالات العلمية.</p>
+                <a href="https://pubmed.ncbi.nlm.nih.gov" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 2: التعامل مع الملفات -->
+        <section>
+            <h2 class="section-header bg-green-600">التعامل مع الملفات</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Google Drive</h3>
+                <p class="tool-description">خدمة تخزين سحابي تتيح حفظ الملفات ومشاركتها مع إمكانية التعاون في الوقت الفعلي على المستندات.</p>
+                <a href="https://www.google.com/drive" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Dropbox</h3>
+                <p class="tool-description">منصة تخزين سحابي آمنة مع ميزات مشاركة الملفات وإدارة الإصدارات.</p>
+                <a href="https://www.dropbox.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Notion</h3>
+                <p class="tool-description">أداة لتنظيم الملاحظات والملفات في مكان واحد مع قوالب جاهزة للمشاريع الأكاديمية.</p>
+                <a href="https://www.notion.so" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Evernote</h3>
+                <p class="tool-description">تطبيق لتدوين الملاحظات وحفظ الملفات والصور مع إمكانية البحث داخل النصوص.</p>
+                <a href="https://evernote.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">PDFescape</h3>
+                <p class="tool-description">أداة مجانية لتحرير ملفات PDF أونلاين، بما في ذلك إضافة النصوص والتعليقات.</p>
+                <a href="https://www.pdfescape.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Adobe Acrobat Pro</h3>
+                <p class="tool-description">برنامج احترافي لتحرير وتنظيم ملفات PDF مع ميزات متقدمة مثل التوقيع الإلكتروني.</p>
+                <a href="https://www.adobe.com/acrobat.html" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">FileZilla</h3>
+                <p class="tool-description">برنامج مفتوح المصدر لنقل الملفات عبر بروتوكول FTP بسهولة وأمان.</p>
+                <a href="https://filezilla-project.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 3: الترجمة -->
+        <section>
+            <h2 class="section-header bg-purple-600">الترجمة</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Google Translate</h3>
+                <p class="tool-description">أداة ترجمة سريعة تدعم أكثر من 100 لغة، مع ميزات ترجمة النصوص والوثائق والصور.</p>
+                <a href="https://translate.google.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">DeepL</h3>
+                <p class="tool-description">أداة ترجمة متقدمة تقدم ترجمات دقيقة للغاية، خاصة للغات الأوروبية.</p>
+                <a href="https://www.deepl.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Microsoft Translator</h3>
+                <p class="tool-description">أداة ترجمة تدعم النصوص والمحادثات الصوتية مع واجهة سهلة الاستخدام.</p>
+                <a href="https://www.microsoft.com/translator" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Reverso</h3>
+                <p class="tool-description">أداة ترجمة تقدم أمثلة سياقية من النصوص الحقيقية لتحسين فهم المعاني.</p>
+                <a href="https://www.reverso.net" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Linguee</h3>
+                <p class="tool-description">قاموس ومحرك بحث للترجمة يعرض أمثلة من النصوص المترجمة مسبقًا.</p>
+                <a href="https://www.linguee.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">iTranslate</h3>
+                <p class="tool-description">تطبيق للترجمة الصوتية والنصية أثناء التنقل، مناسب للطلاب والمسافرين.</p>
+                <a href="https://itranslate.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 4: التحليل الإحصائي -->
+        <section>
+            <h2 class="section-header bg-red-600">التحليل الإحصائي</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">SPSS</h3>
+                <p class="tool-description">برنامج احترافي لتحليل البيانات الإحصائية، يستخدم على نطاق واسع في الأبحاث الأكاديمية.</p>
+                <a href="https://www.ibm.com/spss" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">R</h3>
+                <p class="tool-description">لغة برمجة مفتوحة المصدر للتحليل الإحصائي ورسم البيانات، مع مكتبات قوية مثل ggplot2.</p>
+                <a href="https://www.r-project.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Python</h3>
+                <p class="tool-description">لغة برمجة متعددة الاستخدامات مع مكتبات مثل Pandas وNumPy لتحليل البيانات والتعلم الآلي.</p>
+                <a href="https://www.python.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Excel</h3>
+                <p class="tool-description">أداة بسيطة وشائعة لتحليل البيانات الأساسية ورسم الجداول والرسوم البيانية.</p>
+                <a href="https://www.microsoft.com/microsoft-365/excel" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Stata</h3>
+                <p class="tool-description">برنامج متخصص في التحليل الإحصائي، يستخدم في العلوم الاجتماعية والاقتصاد.</p>
+                <a href="https://www.stata.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">MATLAB</h3>
+                <p class="tool-description">برنامج للتحليل الإحصائي والنمذجة الرياضية، يستخدم في الهندسة والعلوم.</p>
+                <a href="https://www.mathworks.com/products/matlab.html" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">JASP</h3>
+                <p class="tool-description">أداة مفتوحة المصدر وبديل سهل لـ SPSS، تدعم التحليل الإحصائي البسيط والمتقدم.</p>
+                <a href="https://jasp-stats.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Tableau</h3>
+                <p class="tool-description">أداة لتصور البيانات وإنشاء لوحات معلومات تفاعلية، مناسبة للتقارير الأكاديمية.</p>
+                <a href="https://www.tableau.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 5: التلخيص -->
+        <section>
+            <h2 class="section-header bg-yellow-600">التلخيص</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">QuillBot</h3>
+                <p class="tool-description">أداة ذكاء اصطناعي لإعادة الصياغة والتلخيص، تساعد في تبسيط النصوص الأكاديمية.</p>
+                <a href="https://quillbot.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Smmry</h3>
+                <p class="tool-description">أداة تلخيص نصوص أونلاين تحول المقالات الطويلة إلى ملخصات قصيرة بسرعة.</p>
+                <a href="https://smmry.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Resoomer</h3>
+                <p class="tool-description">أداة لتلخيص النصوص الأكاديمية والمقالات، مع التركيز على النقاط الرئيسية.</p>
+                <a href="https://resoomer.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">TLDR This</h3>
+                <p class="tool-description">أداة لتلخيص المقالات الطويلة إلى فقرات قصيرة مع الاحتفاظ بالمعلومات الأساسية.</p>
+                <a href="https://tldrthis.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Grammarly</h3>
+                <p class="tool-description">يساعد في تحسين النصوص وتلخيصها بشكل غير مباشر من خلال تحسين الكتابة.</p>
+                <a href="https://www.grammarly.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Microsoft Word</h3>
+                <p class="tool-description">يحتوي على ميزة مدمجة لتلخيص النصوص، مناسبة للمستندات القصيرة.</p>
+                <a href="https://www.microsoft.com/microsoft-365/word" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 6: عمل الخرائط الذهنية -->
+        <section>
+            <h2 class="section-header bg-teal-600">عمل الخرائط الذهنية</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">MindMeister</h3>
+                <p class="tool-description">أداة أونلاين لإنشاء خرائط ذهنية تعاونية مع قوالب جاهزة وتصميمات جذابة.</p>
+                <a href="https://www.mindmeister.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">XMind</h3>
+                <p class="tool-description">برنامج قوي لإنشاء خرائط ذهنية احترافية، يدعم تنسيقات متعددة للتصدير.</p>
+                <a href="https://www.xmind.app" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Miro</h3>
+                <p class="tool-description">لوحة تعاونية لإنشاء خرائط ذهنية ومخططات مع فرق العمل.</p>
+                <a href="https://miro.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Coggle</h3>
+                <p class="tool-description">أداة بسيطة ومجانية لإنشاء خرائط ذهنية مع واجهة سهلة الاستخدام.</p>
+                <a href="https://coggle.it" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">FreeMind</h3>
+                <p class="tool-description">برنامج مفتوح المصدر لإنشاء خرائط ذهنية، مناسب للمستخدمين الذين يفضلون الحلول المجانية.</p>
+                <a href="http://freemind.sourceforge.net" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Canva</h3>
+                <p class="tool-description">يحتوي على قوالب لإنشاء خرائط ذهنية جذابة بصريًا، مع أدوات تصميم متعددة.</p>
+                <a href="https://www.canva.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 7: عمل العروض التقديمية -->
+        <section>
+            <h2 class="section-header bg-indigo-600">عمل العروض التقديمية</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Microsoft PowerPoint</h3>
+                <p class="tool-description">الخيار التقليدي لإنشاء عروض تقديمية احترافية مع أدوات تحرير متقدمة.</p>
+                <a href="https://www.microsoft.com/microsoft-365/powerpoint" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Google Slides</h3>
+                <p class="tool-description">أداة مجانية تعاونية لإنشاء العروض التقديمية مع إمكانية التحرير الجماعي.</p>
+                <a href="https://www.google.com/slides" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Canva</h3>
+                <p class="tool-description">يقدم قوالب تصميم جذابة لعروض تقديمية مميزة بصريًا.</p>
+                <a href="https://www.canva.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Prezi</h3>
+                <p class="tool-description">أداة لإنشاء عروض تقديمية ديناميكية مع تأثيرات تقريب لجذب الانتباه.</p>
+                <a href="https://prezi.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Keynote</h3>
+                <p class="tool-description">برنامج من Apple لإنشاء عروض تقديمية أنيقة مع تأثيرات سلسة.</p>
+                <a href="https://www.apple.com/keynote" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">SlidesCarnival</h3>
+                <p class="tool-description">موقع يقدم قوالب مجانية لتحسين تصميم العروض التقديمية في PowerPoint وGoogle Slides.</p>
+                <a href="https://www.slidescarnival.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 8: التوثيق -->
+        <section>
+            <h2 class="section-header bg-pink-600">التوثيق</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Zotero</h3>
+                <p class="tool-description">أداة مجانية لإدارة المراجع وإنشاء التوثيق بأنماط مختلفة مثل APA وMLA.</p>
+                <a href="https://www.zotero.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Mendeley</h3>
+                <p class="tool-description">أداة لتنظيم المراجع وإنشاء قوائم المراجع الأكاديمية مع ميزات تعاونية.</p>
+                <a href="https://www.mendeley.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">EndNote</h3>
+                <p class="tool-description">برنامج احترافي لإدارة المراجع والتوثيق، يستخدم في الأبحاث المتقدمة.</p>
+                <a href="https://endnote.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">RefWorks</h3>
+                <p class="tool-description">أداة أونلاين لإدارة المراجع وإنشاء التوثيق بسهولة.</p>
+                <a href="https://www.refworks.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Cite This For Me</h3>
+                <p class="tool-description">موقع لإنشاء توثيق سريع بأنماط مختلفة، مثالي للطلاب.</p>
+                <a href="https://www.citethisforme.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">BibTeX</h3>
+                <p class="tool-description">أداة لإدارة المراجع في مستندات LaTeX، شائعة في العلوم التقنية.</p>
+                <a href="https://www.bibtex.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 9: البحث العلمي والأكاديمي -->
+        <section>
+            <h2 class="section-header bg-orange-600">البحث العلمي والأكاديمي</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Google Scholar</h3>
+                <p class="tool-description">محرك بحث للأوراق العلمية والكتب الأكاديمية، يدعم تحليل الاستشهادات.</p>
+                <a href="https://scholar.google.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Scopus</h3>
+                <p class="tool-description">قاعدة بيانات للمقالات والمجلات الأكاديمية مع أدوات لتحليل التأثير.</p>
+                <a href="https://www.scopus.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Web of Science</h3>
+                <p class="tool-description">منصة لتحليل الاستشهادات والأوراق العلمية، تستخدم في الأبحاث المتقدمة.</p>
+                <a href="https://www.webofscience.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">ORCID</h3>
+                <p class="tool-description">معرف رقمي للباحثين لتتبع منشوراتهم وإثبات هويتهم الأكاديمية.</p>
+                <a href="https://orcid.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Semantic Scholar</h3>
+                <p class="tool-description">محرك بحث مدعوم بالذكاء الاصطناعي للأوراق العلمية مع ميزات تحليل متقدمة.</p>
+                <a href="https://www.semanticscholar.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Connected Papers</h3>
+                <p class="tool-description">أداة لإنشاء خرائط بصرية للأوراق المرتبطة بموضوع بحث معين.</p>
+                <a href="https://www.connectedpapers.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Elicit</h3>
+                <p class="tool-description">أداة ذكاء اصطناعي لتسهيل البحث العلمي وتحليل الأوراق بسرعة.</p>
+                <a href="https://elicit.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 10: تنظيم المعلومات والمراجع -->
+        <section>
+            <h2 class="section-header bg-gray-600">تنظيم المعلومات والمراجع</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Notion</h3>
+                <p class="tool-description">منصة شاملة لتنظيم الملاحظات والمراجع والمهام مع واجهة مرنة.</p>
+                <a href="https://www.notion.so" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Trello</h3>
+                <p class="tool-description">أداة لإدارة المشاريع وتنظيم المعلومات باستخدام البطاقات واللوحات.</p>
+                <a href="https://trello.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Obsidian</h3>
+                <p class="tool-description">تطبيق لتدوين الملاحظات مع روابط بينية لتنظيم الأفكار بشكل شبكي.</p>
+                <a href="https://obsidian.md" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Airtable</h3>
+                <p class="tool-description">أداة لتنظيم المعلومات في جداول تفاعلية مع ميزات تخصيص متقدمة.</p>
+                <a href="https://www.airtable.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Zotero</h3>
+                <p class="tool-description">أداة لتنظيم المراجع الأكاديمية وحفظ المقالات بسهولة.</p>
+                <a href="https://www.zotero.org" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Mendeley</h3>
+                <p class="tool-description">أداة لإدارة المراجع والملاحظات مع ميزات تعاونية.</p>
+                <a href="https://www.mendeley.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+
+        <!-- Section 11: أدوات أخرى مفيدة -->
+        <section>
+            <h2 class="section-header bg-blue-800">أدوات أخرى مفيدة</h2>
+            <div class="tool-card">
+                <h3 class="tool-title">Grammarly</h3>
+                <p class="tool-description">أداة لتحسين الكتابة وتصحيح الأخطاء النحوية، مثالية للأوراق الأكاديمية.</p>
+                <a href="https://www.grammarly.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Overleaf</h3>
+                <p class="tool-description">منصة لكتابة الأوراق العلمية باستخدام LaTeX مع دعم التعاون في الوقت الفعلي.</p>
+                <a href="https://www.overleaf.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Toggl Track</h3>
+                <p class="tool-description">أداة لتتبع الوقت وتحسين إدارة المهام، تساعد في تنظيم وقت البحث.</p>
+                <a href="https://toggl.com/track" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Forest</h3>
+                <p class="tool-description">تطبيق لزيادة التركيز وتقليل التشتت من خلال تقنية Pomodoro.</p>
+                <a href="https://www.forestapp.cc" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Anki</h3>
+                <p class="tool-description">أداة لإنشاء بطاقات تعليمية للحفظ، مثالية لمراجعة المفاهيم الأكاديمية.</p>
+                <a href="https://apps.ankiweb.net" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Scrivener</h3>
+                <p class="tool-description">برنامج لكتابة الأوراق والكتب الطويلة مع تنظيم المحتوى بشكل فعال.</p>
+                <a href="https://www.literatureandlatte.com/scrivener" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Wolfram Alpha</h3>
+                <p class="tool-description">محرك بحث للحسابات الرياضية والتحليل العلمي، يساعد في حل المسائل المعقدة.</p>
+                <a href="https://www.wolframalpha.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+            <hr class="divider">
+            <div class="tool-card">
+                <h3 class="tool-title">Grok</h3>
+                <p class="tool-description">أداة ذكاء اصطناعي من xAI للإجابة على الأسئلة ومساعدة الباحثين، متاحة على grok.com وتطبيقات X.</p>
+                <a href="https://grok.com" class="tool-link" target="_blank">زيارة الموقع</a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
